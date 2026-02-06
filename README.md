@@ -369,6 +369,35 @@ Use worker orchestration (`metaspn-ops`) when:
 - You need durable handoff and idempotent persistence in `metaspn-store`.
 - You need schema-envelope validation and versioned contracts from `metaspn-schemas`.
 
+## M2 Recommendation Reference
+
+`metaspn_engine.m2_recommendations` provides deterministic ranking -> draft composition for recommendation workers.
+
+- Reference objects:
+  - `RecommendationCandidate`
+  - `M2RecommendationSignal`
+  - `M2RecommendationState`
+  - `build_m2_recommendation_pipeline()`
+  - `make_m2_signal(...)`
+- Emission contract:
+  - `m2.recommendation.ranked`
+  - `m2.draft.generated`
+- Deterministic behavior:
+  - Ranking key is stable and replay-friendly, including deterministic tie-breaks.
+  - Emission IDs are stable (`<signal_id>:recommendation|draft`).
+  - `caused_by` remains the original source `signal_id` for both stages.
+
+### M2 Engine vs Worker Boundaries
+
+Use engine-only composition when:
+- Running deterministic recommendation simulations or fixture pipelines in-process.
+- Verifying ranking and draft shaping logic before distributed rollout.
+
+Use worker orchestration (`metaspn-ops`) when:
+- Ranking and draft generation run in separate workers with queue handoff.
+- You need persistent replay/idempotency guarantees from `metaspn-store`.
+- You need schema contract/version checks via `metaspn-schemas` envelopes.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:

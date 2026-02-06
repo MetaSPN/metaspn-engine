@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - M1 routing reference module (`metaspn_engine.m1_routing`) for profile -> score -> route composition.
 - M1 deterministic traceability tests for emission ordering and `caused_by` propagation.
 - README guidance for M1 engine composition vs worker orchestration boundaries.
+- M2 recommendation reference module (`metaspn_engine.m2_recommendations`) for ranking -> draft composition.
+- Deterministic M2 tests for ranking order under equal/near-equal scores and `caused_by` propagation.
+- README guidance for mapping M2 engine composition to `metaspn-ops` and `metaspn-store` boundaries.
 
 ## [0.1.0] - 2025-01-29
 
