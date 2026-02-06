@@ -428,6 +428,24 @@ Use worker orchestration (`metaspn-ops`) when:
 - You need durable stage handoff, retries, and replay safety from `metaspn-store`.
 - You need envelope validation/versioning from `metaspn-schemas`.
 
+## Demo Traceability Mapping
+
+Use `metaspn_engine.demo_support` as the source of truth for demo stage-to-pipeline mapping and expected deterministic emission IDs.
+
+- Stage mapping:
+  - `m0_ingest` -> `metaspn_engine.m0_ingestion` -> `ingest, resolve, emit`
+  - `m1_route` -> `metaspn_engine.m1_routing` -> `profile, score, route`
+  - `m2_shortlist` -> `metaspn_engine.m2_recommendations` -> `recommendation, draft`
+  - `m3_learning` -> `metaspn_engine.m3_learning` -> `attempt, outcome, failure, calibration`
+- Deterministic debug contract:
+  - Emission IDs follow `<signal_id>:<stage_suffix>`
+  - Emissions preserve stage order within each signal
+  - All stage emissions preserve `caused_by=<signal_id>`
+- Chaining guidance for demo orchestrator:
+  - Chain stages by event envelope boundaries in `metaspn-ops` workers.
+  - Use `metaspn-store` replay on signal IDs to trace full stage lineage.
+  - Keep stage workers idempotent on stable IDs generated at the engine boundary.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:

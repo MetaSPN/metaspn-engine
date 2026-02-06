@@ -30,6 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - M3 learning reference module (`metaspn_engine.m3_learning`) for attempt -> outcome -> failure -> calibration flow.
 - Deterministic M3 tests for full stage ordering and `caused_by` continuity across learning stages.
 - README guidance for M3 engine composition vs worker-stage orchestration boundaries.
+- Demo traceability mapping helper (`metaspn_engine.demo_support`) covering M0-M3 stage suffix expectations.
+- Demo alignment tests for M2 shortlist and M3 learning report deterministic traces.
+- README guidance for demo-stage chaining and trace/debug semantics across ops/store boundaries.
 
 ## [0.1.0] - 2025-01-29
 
