@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Transforms: `accumulate`, `update_state`, `emit`, `emit_if`, `branch`, `merge`, `window`, and others.
 - Protocols: `GameProtocol`, `SignalSource`, `EmissionSink`, and related.
 - Example: `PodcastGame` in `metaspn_engine.podcast_game`.
+- Deterministic emission options in emission-producing transforms via `emission_id_factory` and `timestamp_factory`.
+- Contract-focused tests for signal identity/serialization, `caused_by` traceability, and emission ordering.
+- Integration guardrails documentation for `metaspn-schemas` + `metaspn-store` + `metaspn-ops` boundaries.
 
 ## [0.1.0] - 2025-01-29
 

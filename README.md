@@ -286,6 +286,31 @@ for event in listening_events:
 5. **Traceability** - Every emission traces back to its causing signal
 6. **Testability** - Given input + state, output is deterministic
 
+## Integration Guardrails (schemas/store/ops)
+
+When integrating `metaspn-engine` with `metaspn-schemas`, `metaspn-store`, and `metaspn-ops`, use these contract boundaries:
+
+1. **Stable IDs are caller-owned**
+   - `Signal.signal_id` should be generated before engine processing and reused on retries.
+   - If downstream storage is idempotent by `emission_id`, emit deterministic IDs (do not rely on random defaults during retry flows).
+   - Use `emit`, `emit_if`, or `map_to_emission` with `emission_id_factory` when deterministic IDs are required.
+
+2. **Serialization boundary is dictionary payloads**
+   - `Signal.to_dict()` / `Signal.from_dict()` is the engine boundary for transport and persistence.
+   - For envelope-level contracts (schema version, trace context, UTC normalization), map engine objects into `metaspn-schemas` `SignalEnvelope` and `EmissionEnvelope` at integration edges.
+
+3. **Timestamp semantics**
+   - `Signal.timestamp` is event time from the source.
+   - `Emission.timestamp` defaults to processing time, but deterministic pipelines should set it explicitly with `timestamp_factory` in emission transforms.
+
+4. **Deterministic ordering and trace linkage**
+   - Engine emission order is deterministic for a given input order and step order.
+   - Every emission must set `caused_by` to the originating `signal_id`; built-in emission transforms enforce this.
+
+5. **Durable store/replay compatibility**
+   - Keep engine steps pure and side-effect free; persist outputs through store adapters.
+   - For replay-safe ops retries, treat `(signal_id, emission_id)` as immutable identifiers once written.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:

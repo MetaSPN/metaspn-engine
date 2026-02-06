@@ -7,7 +7,7 @@ All transforms are pure functions that follow the Step protocol.
 
 from __future__ import annotations
 from dataclasses import dataclass, replace
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import (
     TypeVar, Any, Optional, List,
     Callable
@@ -53,6 +53,8 @@ def map_signal(
 def map_to_emission(
     mapper: Callable[[Any, Any], Any],
     emission_type: str,
+    emission_id_factory: Optional[Callable[[Signal[Any], Any], str]] = None,
+    timestamp_factory: Optional[Callable[[Signal[Any], Any], datetime]] = None,
 ) -> Callable[[Signal[Any], Any], StepResult]:
     """
     Map signal + state to an emission.
@@ -67,10 +69,16 @@ def map_to_emission(
     """
     def step(signal: Signal[Any], state: Any) -> StepResult:
         result = mapper(signal.payload, state)
+        emission_kwargs: dict[str, Any] = {}
+        if emission_id_factory is not None:
+            emission_kwargs["emission_id"] = emission_id_factory(signal, state)
+        if timestamp_factory is not None:
+            emission_kwargs["timestamp"] = timestamp_factory(signal, state)
         emission = Emission(
             payload=result,
             caused_by=signal.signal_id,
             emission_type=emission_type,
+            **emission_kwargs,
         )
         return [emission], None
     
@@ -301,6 +309,8 @@ def time_window(
 def emit(
     emission_type: str,
     payload_extractor: Callable[[Any, Any], Any],
+    emission_id_factory: Optional[Callable[[Signal[Any], Any], str]] = None,
+    timestamp_factory: Optional[Callable[[Signal[Any], Any], datetime]] = None,
 ) -> Callable[[Signal[Any], Any], StepResult]:
     """
     Always emit an emission.
@@ -312,10 +322,16 @@ def emit(
     """
     def step(signal: Signal[Any], state: Any) -> StepResult:
         payload = payload_extractor(signal.payload, state)
+        emission_kwargs: dict[str, Any] = {}
+        if emission_id_factory is not None:
+            emission_kwargs["emission_id"] = emission_id_factory(signal, state)
+        if timestamp_factory is not None:
+            emission_kwargs["timestamp"] = timestamp_factory(signal, state)
         emission = Emission(
             payload=payload,
             caused_by=signal.signal_id,
             emission_type=emission_type,
+            **emission_kwargs,
         )
         return [emission], None
     
@@ -326,6 +342,8 @@ def emit_if(
     condition: Callable[[Any, Any], bool],
     emission_type: str,
     payload_extractor: Callable[[Any, Any], Any],
+    emission_id_factory: Optional[Callable[[Signal[Any], Any], str]] = None,
+    timestamp_factory: Optional[Callable[[Signal[Any], Any], datetime]] = None,
 ) -> Callable[[Signal[Any], Any], StepResult]:
     """
     Conditionally emit an emission.
@@ -342,10 +360,16 @@ def emit_if(
     def step(signal: Signal[Any], state: Any) -> StepResult:
         if condition(signal.payload, state):
             payload = payload_extractor(signal.payload, state)
+            emission_kwargs: dict[str, Any] = {}
+            if emission_id_factory is not None:
+                emission_kwargs["emission_id"] = emission_id_factory(signal, state)
+            if timestamp_factory is not None:
+                emission_kwargs["timestamp"] = timestamp_factory(signal, state)
             emission = Emission(
                 payload=payload,
                 caused_by=signal.signal_id,
                 emission_type=emission_type,
+                **emission_kwargs,
             )
             return [emission], None
         return [], None
