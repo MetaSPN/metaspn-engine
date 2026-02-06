@@ -340,6 +340,35 @@ Use worker-level orchestration (`metaspn-ops`) when:
 - You need durable signal/emission writes and replay windows through `metaspn-store`.
 - You need envelope contract enforcement (`SignalEnvelope`, `EmissionEnvelope`) from `metaspn-schemas`.
 
+## M1 Routing Reference
+
+`metaspn_engine.m1_routing` provides a deterministic profile -> score -> route composition for M1 flows.
+
+- Reference objects:
+  - `M1ProfileSignal`
+  - `M1RoutingState`
+  - `build_m1_routing_pipeline()`
+  - `make_m1_signal(...)`
+- Emission contract:
+  - `m1.profile.enriched`
+  - `m1.scores.computed`
+  - `m1.route.selected`
+- Deterministic trace behavior:
+  - Emission IDs are stable (`<signal_id>:profile|score|route`)
+  - `caused_by` is preserved from the source signal
+  - Stage outputs preserve fixed order for replay consistency
+
+### M1 Composition vs Worker Orchestration
+
+Use engine composition directly when:
+- You want deterministic in-process stage chaining with explicit state transitions.
+- You are building fixtures, integration tests, or local replay tooling.
+
+Use worker orchestration (`metaspn-ops`) when:
+- Stage boundaries map to separate workers/queues.
+- You need durable handoff and idempotent persistence in `metaspn-store`.
+- You need schema-envelope validation and versioned contracts from `metaspn-schemas`.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:
