@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - M2 recommendation reference module (`metaspn_engine.m2_recommendations`) for ranking -> draft composition.
 - Deterministic M2 tests for ranking order under equal/near-equal scores and `caused_by` propagation.
 - README guidance for mapping M2 engine composition to `metaspn-ops` and `metaspn-store` boundaries.
+- M3 learning reference module (`metaspn_engine.m3_learning`) for attempt -> outcome -> failure -> calibration flow.
+- Deterministic M3 tests for full stage ordering and `caused_by` continuity across learning stages.
+- README guidance for M3 engine composition vs worker-stage orchestration boundaries.
 
 ## [0.1.0] - 2025-01-29
 

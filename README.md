@@ -398,6 +398,36 @@ Use worker orchestration (`metaspn-ops`) when:
 - You need persistent replay/idempotency guarantees from `metaspn-store`.
 - You need schema contract/version checks via `metaspn-schemas` envelopes.
 
+## M3 Learning Reference
+
+`metaspn_engine.m3_learning` provides deterministic attempt -> outcome -> failure -> calibration composition.
+
+- Reference objects:
+  - `M3AttemptSignal`
+  - `M3LearningState`
+  - `build_m3_learning_pipeline()`
+  - `make_m3_signal(...)`
+- Emission contract:
+  - `m3.attempt.snapshot`
+  - `m3.outcome.evaluated`
+  - `m3.failure.classified`
+  - `m3.calibration.proposed`
+- Deterministic trace behavior:
+  - Stable emission IDs (`<signal_id>:attempt|outcome|failure|calibration`)
+  - Stable stage order for replay
+  - `caused_by` continuity from the source signal through calibration
+
+### M3 Engine vs Worker Boundaries
+
+Use engine composition directly when:
+- Modeling learning logic in deterministic integration tests.
+- Replaying attempt fixtures to verify stage outcomes.
+
+Use worker orchestration (`metaspn-ops`) when:
+- Attempt/outcome/failure/calibration stages run as separate workers.
+- You need durable stage handoff, retries, and replay safety from `metaspn-store`.
+- You need envelope validation/versioning from `metaspn-schemas`.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:
