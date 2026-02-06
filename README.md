@@ -311,6 +311,35 @@ When integrating `metaspn-engine` with `metaspn-schemas`, `metaspn-store`, and `
    - Keep engine steps pure and side-effect free; persist outputs through store adapters.
    - For replay-safe ops retries, treat `(signal_id, emission_id)` as immutable identifiers once written.
 
+## M0 Orchestration Reference
+
+`metaspn_engine.m0_ingestion` provides a minimal ingest -> resolve -> emit path for social ingestion.
+
+- Reference objects:
+  - `SocialIngestionEvent`
+  - `M0IngestionState`
+  - `build_m0_ingestion_pipeline()`
+  - `make_m0_signal(...)`
+- Emission contract:
+  - `m0.ingest.accepted`
+  - `m0.resolve.completed`
+  - `m0.event.ready`
+- Determinism:
+  - Emission IDs are stable (`<signal_id>:ingest|resolve|emit`)
+  - `caused_by` always equals source `signal_id`
+  - Emission sequence follows step order for each signal
+
+### Engine Directly vs Worker Orchestration
+
+Use engine directly when:
+- Running deterministic local processing in tests, replay tools, or single-process adapters.
+- Input ordering and state lifecycle are controlled in-process.
+
+Use worker-level orchestration (`metaspn-ops`) when:
+- You need queue retries, dead-letter handling, and concurrency controls.
+- You need durable signal/emission writes and replay windows through `metaspn-store`.
+- You need envelope contract enforcement (`SignalEnvelope`, `EmissionEnvelope`) from `metaspn-schemas`.
+
 ## Why This Exists
 
 MetaSPN measures transformation, not engagement. But transformation can happen in many contexts:
