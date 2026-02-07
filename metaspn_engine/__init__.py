@@ -39,8 +39,17 @@ from .transforms import (
     merge,
 )
 from .protocols import GameProtocol, SignalSource, EmissionSink
+from .m4_rewards import (
+    GameAttentionInput,
+    StakerStakeInput,
+    Season1RewardSignal,
+    RewardPipelineConfig,
+    M4RewardState,
+    build_m4_reward_pipeline,
+    make_m4_signal,
+)
 
-__version__ = "0.1.0"
+__version__ = "0.1.3"
 __all__ = [
     # Core types
     "Signal",
@@ -65,4 +74,12 @@ __all__ = [
     "GameProtocol",
     "SignalSource",
     "EmissionSink",
+    # M4 rewards reference
+    "GameAttentionInput",
+    "StakerStakeInput",
+    "Season1RewardSignal",
+    "RewardPipelineConfig",
+    "M4RewardState",
+    "build_m4_reward_pipeline",
+    "make_m4_signal",
 ]

@@ -21,6 +21,7 @@ def test_demo_stage_specs_have_expected_reference_suffixes() -> None:
     specs = demo_stage_specs()
     assert tuple(specs["m2_shortlist"].emission_suffixes) == ("recommendation", "draft")
     assert tuple(specs["m3_learning"].emission_suffixes) == ("attempt", "outcome", "failure", "calibration")
+    assert tuple(specs["m4_rewards"].emission_suffixes) == ("attention", "pool", "staker")
     assert expected_emission_ids("sig_demo", "m2_shortlist") == [
         "sig_demo:recommendation",
         "sig_demo:draft",

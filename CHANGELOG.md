@@ -33,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Demo traceability mapping helper (`metaspn_engine.demo_support`) covering M0-M3 stage suffix expectations.
 - Demo alignment tests for M2 shortlist and M3 learning report deterministic traces.
 - README guidance for demo-stage chaining and trace/debug semantics across ops/store boundaries.
+- M4 rewards reference module (`metaspn_engine.m4_rewards`) implementing deterministic attention share -> game pool -> staker share allocation.
+- Optional early conviction multiplier config in M4 reward pipeline for experiment toggling.
+- Golden M4 Season 1 reward tests covering deterministic outputs, rerun stability, and trace metadata.
+- Reference documentation for the Season 1 reward pipeline with worked examples in `docs/season1_reward_pipeline.md`.
+- M4 Season 1 reward reference module (`metaspn_engine.m4_rewards`) for game attention share -> reward pool allocation -> staker share allocation.
+- Optional early-conviction multiplier flag in the M4 reward pipeline config for controlled experiments.
+- Golden tests for Season 1 reward outputs, deterministic rerun behavior, and emission trace metadata.
+- Worked-example reference documentation for Season 1 reward allocation at `docs/season1-reward-pipeline.md`.
 
 ## [0.1.0] - 2025-01-29
 

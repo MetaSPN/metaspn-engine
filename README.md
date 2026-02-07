@@ -428,6 +428,64 @@ Use worker orchestration (`metaspn-ops`) when:
 - You need durable stage handoff, retries, and replay safety from `metaspn-store`.
 - You need envelope validation/versioning from `metaspn-schemas`.
 
+## M4 Reward Reference (Season 1)
+
+`metaspn_engine.m4_rewards` provides deterministic attention -> reward pool -> staker allocation composition.
+
+- Reference objects:
+  - `StakerPosition`
+  - `GameRewardInput`
+  - `M4RewardSignal`
+  - `M4RewardConfig`
+  - `M4RewardState`
+  - `build_m4_reward_pipeline()`
+  - `make_m4_signal(...)`
+- Emission contract:
+  - `m4.rewards.attention.computed`
+  - `m4.rewards.pool.allocated`
+  - `m4.rewards.staker.allocated`
+- Deterministic trace behavior:
+  - Stable emission IDs (`<signal_id>:attention|pool|staker`)
+  - Stable stage order for replay
+  - `caused_by` continuity from the source signal through staker allocation
+  - Stage-level trace metadata in `emission.metadata["trace"]`
+
+### M4 Engine vs Worker Boundaries
+
+Use engine composition directly when:
+- Validating season reward mechanics in deterministic tests and replay fixtures.
+- Running reward what-if analysis by toggling `M4RewardConfig`.
+
+Use worker orchestration (`metaspn-ops`) when:
+- Reward stages are separated across queue-backed workers.
+- You need durable persistence/replay/idempotency controls from `metaspn-store`.
+- You need envelope contract validation from `metaspn-schemas`.
+
+## M4 Season 1 Reward Reference
+
+`metaspn_engine.m4_rewards` provides deterministic game-attention -> reward-pool -> staker-share allocation for Season 1.
+
+- Reference objects:
+  - `GameAttentionInput`
+  - `StakerStakeInput`
+  - `Season1RewardSignal`
+  - `RewardPipelineConfig`
+  - `M4RewardState`
+  - `build_m4_reward_pipeline()`
+  - `make_m4_signal(...)`
+- Emission contract:
+  - `m4.reward.game_attention_share.computed`
+  - `m4.reward.game_pool_allocated`
+  - `m4.reward.staker_share_allocated`
+- Deterministic trace behavior:
+  - Stable emission IDs (`<signal_id>:attention|pool|staker`)
+  - Stable stage order and deterministic micro-unit allocation
+  - `caused_by` continuity and stage-level `metadata.trace` fields
+- Experiment flag:
+  - Optional early-conviction multiplier via `RewardPipelineConfig(enable_early_conviction_multiplier=True)`
+
+Worked examples: `docs/season1-reward-pipeline.md`
+
 ## Demo Traceability Mapping
 
 Use `metaspn_engine.demo_support` as the source of truth for demo stage-to-pipeline mapping and expected deterministic emission IDs.
@@ -437,6 +495,7 @@ Use `metaspn_engine.demo_support` as the source of truth for demo stage-to-pipel
   - `m1_route` -> `metaspn_engine.m1_routing` -> `profile, score, route`
   - `m2_shortlist` -> `metaspn_engine.m2_recommendations` -> `recommendation, draft`
   - `m3_learning` -> `metaspn_engine.m3_learning` -> `attempt, outcome, failure, calibration`
+  - `m4_rewards` -> `metaspn_engine.m4_rewards` -> `attention, pool, staker`
 - Deterministic debug contract:
   - Emission IDs follow `<signal_id>:<stage_suffix>`
   - Emissions preserve stage order within each signal

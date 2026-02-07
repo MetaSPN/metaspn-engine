@@ -43,6 +43,12 @@ def demo_stage_specs() -> dict[str, DemoStageSpec]:
             module_name="metaspn_engine.m3_learning",
             emission_suffixes=("attempt", "outcome", "failure", "calibration"),
         ),
+        "m4_rewards": DemoStageSpec(
+            stage_key="m4_rewards",
+            pipeline_name="m4_attention_pool_staker",
+            module_name="metaspn_engine.m4_rewards",
+            emission_suffixes=("attention", "pool", "staker"),
+        ),
     }
 
 

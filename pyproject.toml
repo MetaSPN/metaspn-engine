@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "metaspn-engine"
-version = "0.1.0"
+version = "0.1.3"
 description = "Minimal signal processing engine for observable games"
 readme = "README.md"
 requires-python = ">=3.10"
